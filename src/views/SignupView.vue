@@ -63,11 +63,27 @@
       </form>
     </div>
   </div>
+  <div
+    v-if="showModal"
+    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+      <span class="absolute top-2 right-2 cursor-pointer" @click="showModal = false">&times;</span>
+      <p class="text-center text-lg">Please check your email for verification before logging in.</p>
+      <div class="mt-4 text-center">
+        <router-link to="/login">
+          <button class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+            Go to Login
+          </button>
+        </router-link>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { useMutation } from '@tanstack/vue-query'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import http from '../utils/http'
 
@@ -75,6 +91,7 @@ export default {
   name: 'SignupView',
   setup() {
     const router = useRouter()
+    const showModal = ref(false)
 
     onMounted(() => {
       const token = localStorage.getItem('token')
@@ -87,13 +104,8 @@ export default {
       mutationFn: (data) => http.post('/auth/signup', data),
       onSuccess: (response) => {
         console.log('Success:', response.data)
-        const token = response.data.token
-        localStorage.setItem('token', token)
 
-        const role = response.data.role
-        localStorage.setItem('role', role)
-
-        router.push('/')
+        showModal.value = true
       },
     })
 
@@ -103,6 +115,7 @@ export default {
       error,
       isSuccess,
       mutate,
+      showModal,
     }
   },
   data() {
@@ -129,3 +142,7 @@ export default {
   },
 }
 </script>
+
+<style>
+/* No additional styles needed, as Tailwind handles the styling */
+</style>
