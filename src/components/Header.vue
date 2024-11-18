@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 
 const route = useRoute()
@@ -56,6 +56,13 @@ const hideNavigation = computed(() => {
 const isAdmin = computed(() => {
   const role = localStorage.getItem('role')
   return role === 'ADMIN'
+})
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+  }
 })
 
 const router = useRouter()
